@@ -41,7 +41,11 @@ int  calc_ransac_iterations (double p,
 
     /** TODO HERE
      * Coding here**/
-    return 0;
+    double p_k = math::fastpow(p,K);
+    double M_d = std::log(1.0 - z )/std::log(1.0 - p_k);
+
+
+    return static_cast<int>(math::round(M_d));
 
 
     /** Reference
@@ -171,6 +175,13 @@ std::vector<int> find_inliers(sfm::Correspondences2D2D const & matches
 
     std::vector<int> inliers;
 
+    for(int i=0; i< matches.size(); i++){
+        double error = calc_sampson_distance(F, matches[i]);
+        if(error< squared_thresh){
+            inliers.push_back(i);
+        }
+    }
+
     /**
      * TODO HERE
      *
@@ -193,7 +204,7 @@ int main(int argc, char *argv[]){
 
     /** 加载归一化后的匹配对 */
     sfm::Correspondences2D2D corr_all;
-    std::ifstream in("./examples/task1/correspondences.txt");
+    std::ifstream in("../../../examples/task1/correspondences.txt");
     assert(in.is_open());
 
     std::string line, word;
